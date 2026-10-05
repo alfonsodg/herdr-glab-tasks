@@ -200,6 +200,7 @@ func (m Model) renderDetail() string {
 
 func Run(ctx context.Context, issues []gitlab.Issue, branchRef string) error {
 	_ = ctx
+	ForceColor()
 	p := tea.NewProgram(NewModel(issues, branchRef))
 	_, err := p.Run()
 	return err
