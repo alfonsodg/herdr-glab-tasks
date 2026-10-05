@@ -40,5 +40,16 @@ CLI already authenticated on the machine. The manifest declares no
 
 ## Docs
 
+- [docs/INSTALL.md](docs/INSTALL.md): prerequisites, install, verification.
+- [docs/USER_GUIDE.md](docs/USER_GUIDE.md): panel, filters, new flow, FAQ.
 - [docs/STANDARDS.md](docs/STANDARDS.md): stack, linters, patterns, testing.
 - [CHANGELOG.md](CHANGELOG.md): version history.
+
+## Herdr references
+
+- [Herdr plugin docs](https://herdr.dev/docs/plugins/): manifest model,
+  trust rules (listings are unreviewed, pin with `--ref`), and install flow.
+- [Herdr plugin marketplace](https://herdr.dev/plugins/): the index this
+  plugin targets once released.
+- Base project [hlouis/herdr-glab](https://github.com/hlouis/herdr-glab)
+  (MIT): MR panel this plugin complements with Issues coverage.
