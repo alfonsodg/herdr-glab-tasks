@@ -59,6 +59,7 @@ func runPanel(ctx context.Context, args []string) error {
 	label := fs.String("label", "", "filter by label")
 	state := fs.String("state", "opened", "issue state")
 	cwd := fs.String("cwd", "", "workspace directory holding the git remote")
+	printOut := fs.Bool("print", false, "print static panel and exit instead of interactive TUI")
 	if err := fs.Parse(args); err != nil {
 		return err
 	}
@@ -81,11 +82,18 @@ func runPanel(ctx context.Context, args []string) error {
 		return err
 	}
 	issues = ui.FilterByLabel(issues, *label)
-	fmt.Print(ui.RenderPanel(ui.GroupByStatus(issues)))
+	branchRef := ""
 	if iid, ok := branch.IssueRef(dir); ok {
-		fmt.Printf("branch: Ref #%d\n", iid)
+		branchRef = fmt.Sprintf("branch: Ref #%d", iid)
 	}
-	return nil
+	if *printOut {
+		fmt.Print(ui.RenderPanel(ui.GroupByStatus(issues)))
+		if branchRef != "" {
+			fmt.Println(branchRef)
+		}
+		return nil
+	}
+	return ui.Run(ctx, issues, branchRef)
 }
 
 func runNew(ctx context.Context, args []string) error {
