@@ -10,6 +10,7 @@ import (
 	"strings"
 
 	"github.com/alfonsodg/herdr-glab-tasks/internal/branch"
+	"github.com/alfonsodg/herdr-glab-tasks/internal/config"
 	"github.com/alfonsodg/herdr-glab-tasks/internal/gitlab"
 	"github.com/alfonsodg/herdr-glab-tasks/internal/pane"
 	"github.com/alfonsodg/herdr-glab-tasks/internal/repo"
@@ -56,12 +57,21 @@ func runPanelOpen(ctx context.Context, args []string) error {
 
 func runPanel(ctx context.Context, args []string) error {
 	fs := flag.NewFlagSet("panel", flag.ContinueOnError)
-	label := fs.String("label", "", "filter by label")
-	state := fs.String("state", "opened", "issue state")
+	label := fs.String("label", "", "filter by label (overrides config)")
+	state := fs.String("state", "", "issue state: opened, closed, all (overrides config)")
 	cwd := fs.String("cwd", "", "workspace directory holding the git remote")
 	printOut := fs.Bool("print", false, "print static panel and exit instead of interactive TUI")
 	if err := fs.Parse(args); err != nil {
 		return err
+	}
+	cfg := loadConfig()
+	useState := *state
+	if useState == "" {
+		useState = cfg.State
+	}
+	useLabel := *label
+	if useLabel == "" {
+		useLabel = cfg.Label
 	}
 	dir := *cwd
 	if dir == "" {
@@ -80,14 +90,14 @@ func runPanel(ctx context.Context, args []string) error {
 		return ui.RunError(ctx, msg)
 	}
 	client := gitlab.NewClient("glab", host)
-	issues, err := client.ListIssues(ctx, project, *state, *label)
+	issues, err := client.ListIssues(ctx, project, useState, useLabel)
 	if err != nil {
 		if *printOut {
 			return err
 		}
 		return ui.RunError(ctx, fmt.Sprintf("Cannot list issues for %s: %v", project, err))
 	}
-	issues = ui.FilterByLabel(issues, *label)
+	issues = ui.FilterByLabel(issues, useLabel)
 	branchRef := ""
 	if iid, ok := branch.IssueRef(dir); ok {
 		branchRef = fmt.Sprintf("branch: Ref #%d", iid)
@@ -107,14 +117,23 @@ func runNew(ctx context.Context, args []string) error {
 	title := fs.String("title", "", "issue title")
 	description := fs.String("description", "", "issue description")
 	labels := fs.String("labels", "", "comma-separated labels")
-	branchType := fs.String("type", "feature", "branch type")
-	scope := fs.String("scope", "tasks", "branch scope")
+	branchType := fs.String("type", "", "branch type (overrides config)")
+	scope := fs.String("scope", "", "branch scope (overrides config)")
 	cwd := fs.String("cwd", "", "workspace directory holding the git remote")
 	if err := fs.Parse(args); err != nil {
 		return err
 	}
 	if strings.TrimSpace(*title) == "" {
 		return fmt.Errorf("title is required")
+	}
+	cfg := loadConfig()
+	useType := *branchType
+	if useType == "" {
+		useType = cfg.BranchType
+	}
+	useScope := *scope
+	if useScope == "" {
+		useScope = cfg.BranchScope
 	}
 	dir := *cwd
 	if dir == "" {
@@ -143,11 +162,21 @@ func runNew(ctx context.Context, args []string) error {
 	if issue.IID == 0 {
 		return fmt.Errorf("could not determine created issue IID")
 	}
-	if err := branch.CreateIssueBranch(dir, *branchType, *scope, issue.IID); err != nil {
+	if err := branch.CreateIssueBranch(dir, useType, useScope, issue.IID); err != nil {
 		return err
 	}
-	fmt.Printf("created #%d %s on branch %s\n", issue.IID, issue.Title, branch.Name(*branchType, *scope, issue.IID))
+	fmt.Printf("created #%d %s on branch %s\n", issue.IID, issue.Title, branch.Name(useType, useScope, issue.IID))
 	return nil
+}
+
+func loadConfig() config.Config {
+	dir := os.Getenv("HERDR_PLUGIN_CONFIG_DIR")
+	if dir == "" {
+		if out, err := exec.Command("herdr", "plugin", "config-dir", "alfonsodg.herdr-gitlab-issues").Output(); err == nil {
+			dir = strings.TrimSpace(string(out))
+		}
+	}
+	return config.Load(dir)
 }
 
 func workspaceProject(dir string) (host, project string, err error) {

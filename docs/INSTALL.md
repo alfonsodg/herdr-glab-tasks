@@ -67,6 +67,18 @@ How to install the GitLab Issues plugin in Herdr.
 
    Expected: a line with `alfonsodg.herdr-gitlab-issues (GitLab Issues)`.
 
+5. Optional: plugin defaults via `config.toml` in the plugin config
+   directory (`herdr plugin config-dir alfonsodg.herdr-gitlab-issues`):
+
+   ```toml
+   state = "opened"        # opened | closed | all
+   label = ""              # default label filter, e.g. priority::high
+   branch_type = "feature" # default branch type for the new flow
+   branch_scope = "tasks"  # default branch scope for the new flow
+   ```
+
+   Every key is optional; missing keys keep the built-in defaults.
+
 ## Verification
 
 Press `Ctrl+B i` from a workspace whose `origin` remote points to GitLab.
