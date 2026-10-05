@@ -23,6 +23,48 @@ type Model struct {
 	branch  string
 	err     string
 	loading bool
+	detail  *Detail
+	width   int
+	height  int
+}
+
+func (m Model) InDetail() bool {
+	return m.detail != nil
+}
+
+func (m *Model) OpenDetail(issue gitlab.Issue) {
+	m.detail = &Detail{Issue: issue, height: 20}
+}
+
+func (m *Model) CloseDetail() {
+	m.detail = nil
+}
+
+func (m Model) DetailOffset() int {
+	if m.detail == nil {
+		return 0
+	}
+	return m.detail.offset
+}
+
+func (m *Model) DetailDown() {
+	if m.detail == nil {
+		return
+	}
+	maxOffset := len(DetailLines(m.detail.Issue, m.width)) - m.detail.height
+	if maxOffset < 0 {
+		maxOffset = 0
+	}
+	if m.detail.offset < maxOffset {
+		m.detail.offset++
+	}
+}
+
+func (m *Model) DetailUp() {
+	if m.detail == nil || m.detail.offset <= 0 {
+		return
+	}
+	m.detail.offset--
 }
 
 func NewModel(issues []gitlab.Issue, branchRef string) Model {
@@ -42,6 +84,17 @@ type IssuesLoaded struct {
 func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 	switch msg := msg.(type) {
 	case tea.KeyMsg:
+		if m.detail != nil {
+			switch msg.String() {
+			case "q", "esc":
+				m.detail = nil
+			case "up", "k":
+				m.DetailUp()
+			case "down", "j":
+				m.DetailDown()
+			}
+			return m, nil
+		}
 		switch msg.String() {
 		case "q", "ctrl+c", "esc":
 			return m, tea.Quit
@@ -49,11 +102,20 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 			m.tree.MoveUp()
 		case "down", "j":
 			m.tree.MoveDown()
-		case "enter", "tab", " ":
+		case "tab", " ":
 			m.tree.Toggle()
+		case "enter":
+			if row := m.tree.CurrentRow(); row != nil && row.Kind == RowIssue && row.Issue != nil {
+				m.OpenDetail(*row.Issue)
+			} else {
+				m.tree.Toggle()
+			}
 		}
 	case tea.WindowSizeMsg:
-		_ = msg
+		m.width, m.height = msg.Width, msg.Height
+		if m.detail != nil {
+			m.detail.height = max(msg.Height-8, 5)
+		}
 	case IssuesLoaded:
 		if msg.Err != nil {
 			m.err = msg.Err.Error()
@@ -74,6 +136,9 @@ func (m Model) View() tea.View {
 }
 
 func (m Model) render() string {
+	if m.detail != nil {
+		return m.renderDetail()
+	}
 	var out strings.Builder
 	out.WriteString(groupStyle.Render("GitLab Issues"))
 	if m.tree.filter != "" {
@@ -97,11 +162,10 @@ func (m Model) render() string {
 			}
 			line = groupStyle.Render(fmt.Sprintf("%s %s", marker, row.Column))
 		case RowIssue:
-			labels := ""
-			if len(row.Issue.Labels) > 0 {
-				labels = " [" + strings.Join(row.Issue.Labels, ", ") + "]"
+			line = fmt.Sprintf("  #%d %s", row.Issue.IID, row.Issue.Title)
+			if chips := renderLabels(row.Issue.Labels); chips != "" {
+				line += " " + chips
 			}
-			line = fmt.Sprintf("  #%d %s%s", row.Issue.IID, row.Issue.Title, labels)
 		}
 		if i == m.tree.cursor {
 			line = selStyle.Render(line)
@@ -109,11 +173,28 @@ func (m Model) render() string {
 		out.WriteString(line + "\n")
 	}
 	out.WriteString("\n")
-	footer := "up/down navigate · enter collapse · q quit"
+	footer := "up/down navigate · enter detail · tab collapse · q quit"
 	if m.branch != "" {
 		footer += " · " + m.branch
 	}
 	out.WriteString(dimStyle.Render(footer))
+	return out.String()
+}
+
+func (m Model) renderDetail() string {
+	var out strings.Builder
+	out.WriteString(groupStyle.Render("GitLab Issues"))
+	out.WriteString("\n\n")
+	lines := DetailLines(m.detail.Issue, m.width)
+	height := m.detail.height
+	if height <= 0 {
+		height = 20
+	}
+	for _, line := range ScrollWindow(lines, m.detail.offset, height) {
+		out.WriteString(line + "\n")
+	}
+	out.WriteString("\n")
+	out.WriteString(dimStyle.Render("j/k scroll · esc back · q quit"))
 	return out.String()
 }
 
