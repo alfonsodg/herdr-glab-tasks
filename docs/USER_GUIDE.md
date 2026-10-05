@@ -23,11 +23,42 @@ stays alive until you quit it.
 | Keys | Action |
 | ---- | ------ |
 | `j` / `k` or arrows | Move the cursor |
-| `enter` / `tab` / `space` | Collapse or expand a group |
+| `enter` | Open the issue detail window |
+| `tab` / `space` | Collapse or expand a group |
 | `q` / `esc` / `ctrl+c` | Quit the panel |
 
 Group headers show `-` (expanded) or `+` (collapsed). The footer shows
 the current branch issue when the latest commit carries it.
+
+### Colors
+
+| Element | Color |
+| ------- | ----- |
+| `todo` header | Bright yellow |
+| `review` header | Bright magenta |
+| `backlog` header | Gray |
+| `done` header | Green |
+| `none` header | Cyan |
+| Issue title `priority::critical` | Bright red |
+| Issue title `priority::high` | Bright yellow |
+| Issue title `priority::medium` | Bright cyan |
+| Issue title `priority::low` | Gray |
+
+Label chips keep their own family colors. The color profile is forced
+on pane start so the palette renders even in terminals advertised as
+dumb; `NO_COLOR` still disables colors when you set it.
+
+### Issue detail window
+
+Press `enter` on an issue to open its detail window: title, IID, state,
+author, date, URL, labels, and the full description.
+
+| Keys | Action |
+| ---- | ------ |
+| `j` / `k` or arrows | Scroll the description |
+| `esc` / `q` | Back to the tree (cursor preserved) |
+
+Long descriptions scroll in a window sized to the terminal height.
 
 ### Batch mode for scripts
 

@@ -70,8 +70,9 @@ How to install the GitLab Issues plugin in Herdr.
 ## Verification
 
 Press `Ctrl+B i` from a workspace whose `origin` remote points to GitLab.
-Expected: the interactive issue tree stays open with grouped sections.
-Batch equivalent for scripts:
+Expected: the interactive issue tree stays open with grouped sections,
+colored headers, and priority-colored titles. Press `enter` on an issue
+to check the scrollable detail window. Batch equivalent for scripts:
 
 ```sh
 bin/herdr-gitlab-issues panel --print

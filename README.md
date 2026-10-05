@@ -12,6 +12,10 @@ plugin addresses.
 
 - Interactive issue tree grouped by `todo`, `review`, `backlog`, `done`,
   `none` columns with collapse and cursor navigation.
+- Color scheme per column and per priority: headers colored by status,
+  issue titles colored by `priority::*`, label chips per family.
+- Scrollable detail window on `enter` (title, author, date, URL,
+  labels, description) with `j/k` scroll and `esc` back.
 - Label filter (`--label`) and state selector (`--state`).
 - Batch mode (`panel --print`) for scripts keeping the classic output.
 - Create issue plus branch in one step (`new` command).
