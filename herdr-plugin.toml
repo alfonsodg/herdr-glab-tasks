@@ -1,0 +1,37 @@
+id = "alfonsodg.herdr-gitlab-issues"
+name = "GitLab Issues"
+version = "0.1.0"
+min_herdr_version = "0.9.0"
+description = "GitLab Issues del workspace: panel por estado, crear issue + rama, CI de la rama"
+platforms = ["linux", "macos"]
+
+[[build]]
+command = ["sh", "install.sh"]
+
+[[events]]
+on = "worktree.created"
+command = ["bin/herdr-gitlab-issues", "panel"]
+
+[[actions]]
+id = "issues"
+title = "GitLab Issues"
+contexts = ["workspace", "tab"]
+command = ["bin/herdr-gitlab-issues", "panel"]
+
+[[actions]]
+id = "new-issue"
+title = "Nuevo issue + rama"
+contexts = ["workspace"]
+command = ["bin/herdr-gitlab-issues", "new"]
+
+[[panes]]
+id = "issues"
+title = "GitLab Issues"
+placement = "split"
+command = ["bin/herdr-gitlab-issues", "panel"]
+
+[[link_handlers]]
+id = "gitlab-issue"
+title = "Abrir issue en GitLab"
+pattern = "^https://[^/]+/.+/-/issues/[0-9]+$"
+action = "issues"
