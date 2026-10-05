@@ -80,6 +80,27 @@ bin/herdr-gitlab-issues panel --state all --label type::bug
 States are `opened` (default), `closed`, and `all`. The label flag
 matches one GitLab label exactly, for example `status::review`.
 
+## Configuration
+
+Defaults live in `config.toml` inside the plugin config directory
+(`herdr plugin config-dir alfonsodg.herdr-gitlab-issues`):
+
+| Key | Default | Meaning |
+| --- | ------- | ------- |
+| `state` | `opened` | Initial issue state: `opened`, `closed`, `all` |
+| `label` | empty | Initial label filter |
+| `branch_type` | `feature` | Branch type used by the `new` flow |
+| `branch_scope` | `tasks` | Branch scope used by the `new` flow |
+
+Precedence: CLI flag > `config.toml` > built-in default. Example:
+
+```toml
+state = "all"
+label = "priority::high"
+branch_type = "fix"
+branch_scope = "auth"
+```
+
 ## Create issue plus branch
 
 Press `Ctrl+B Shift+I` for the **Nuevo issue + rama** action. From the
