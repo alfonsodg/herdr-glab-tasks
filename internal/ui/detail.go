@@ -68,3 +68,19 @@ func ScrollWindow(lines []string, offset, height int) []string {
 	}
 	return lines[offset:end]
 }
+
+func windowRows(total, cursor, height int) (int, int) {
+	if height <= 0 || height >= total {
+		return 0, total
+	}
+	start := 0
+	if cursor >= height {
+		start = cursor - height + 1
+	}
+	end := start + height
+	if end > total {
+		end = total
+		start = max(end-height, 0)
+	}
+	return start, end
+}
