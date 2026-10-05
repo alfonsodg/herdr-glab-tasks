@@ -34,7 +34,11 @@ func (m Model) InDetail() bool {
 }
 
 func (m *Model) OpenDetail(issue gitlab.Issue) {
-	m.detail = &Detail{Issue: issue, height: 20}
+	height := m.height - 8
+	if height < 5 {
+		height = 20
+	}
+	m.detail = &Detail{Issue: issue, height: height}
 }
 
 func (m *Model) CloseDetail() {
@@ -161,7 +165,13 @@ func (m Model) render() string {
 		out.WriteString(dimStyle.Render("Press q to close."))
 		out.WriteString("\n")
 	}
-	for i, row := range rows {
+	viewHeight := m.height - 4
+	if viewHeight < 3 {
+		viewHeight = 20
+	}
+	start, end := windowRows(len(rows), m.tree.cursor, viewHeight)
+	for i := start; i < end; i++ {
+		row := rows[i]
 		line := ""
 		switch row.Kind {
 		case RowHeader:
