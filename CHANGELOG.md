@@ -5,6 +5,21 @@ All notable changes to this project are documented here. Format follows
 
 ## [Unreleased]
 
+## [0.2.0] - 2026-10-05
+
+Interactive panel release: keyboard-driven issue tree plus keybindings.
+
+### Added in 0.2.0
+
+- Interactive bubbletea issue tree: cursor, collapse, filter (#10).
+- `panel --print` batch mode for scripts (#10).
+- `Ctrl+B i` keybinding opening the pane via `panel-open` (#8).
+- Focused-workspace cwd resolution so the pane renders (#9).
+
+### Fixed
+
+- Pane died silently on wrong cwd; errors now print visibly (#9).
+
 ## [0.1.0] - 2026-10-05
 
 First functional release: Herdr GitLab Issues plugin v1 scope.

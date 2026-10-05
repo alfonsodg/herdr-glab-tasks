@@ -3,9 +3,9 @@
 | Field | Value |
 | ----- | ----- |
 | **Project** | herdr-glab-tasks — Herdr plugin for GitLab Issues |
-| **Version** | v0.1.0 |
+| **Version** | v0.2.0 |
 | **Created** | 2026-10-05 |
-| **Updated** | 2026-10-05 02:00 |
+| **Updated** | 2026-10-05 11:30 |
 | **Author** | Alfonso de la Guarda Reyes |
 | **Location** | `docs/INSTALL.md` |
 
@@ -31,7 +31,7 @@ How to install the GitLab Issues plugin in Herdr.
    Expected: JSON output with `"plugin_id": "alfonsodg.herdr-gitlab-issues"`
    and `"enabled": true`.
 
-2. Build the binary:
+2. Build the binary (pulls bubbletea/lipgloss TUI deps on first run):
 
    ```sh
    sh install.sh
@@ -39,7 +39,27 @@ How to install the GitLab Issues plugin in Herdr.
 
    Expected: `built bin/herdr-gitlab-issues with go version ...`.
 
-3. Confirm Herdr lists the plugin:
+3. Bind the keys in the local Herdr config (`~/.config/herdr/config.toml`,
+   never in git):
+
+   ```toml
+   [[keys.command]]
+   key = "prefix+i"
+   type = "plugin_action"
+   command = "alfonsodg.herdr-gitlab-issues.issues"
+   description = "GitLab Issues del workspace"
+
+   [[keys.command]]
+   key = "prefix+shift+i"
+   type = "plugin_action"
+   command = "alfonsodg.herdr-gitlab-issues.new-issue"
+   description = "Nuevo issue + rama"
+   ```
+
+   The `i` key is free: no overlap with annotate, crabbox, file-viewer,
+   or telegram bindings. Reload Herdr so it picks the keys up.
+
+4. Confirm Herdr lists the plugin:
 
    ```sh
    herdr plugin list
@@ -49,15 +69,15 @@ How to install the GitLab Issues plugin in Herdr.
 
 ## Verification
 
-Run the panel from a workspace whose `origin` remote points to GitLab:
+Press `Ctrl+B i` from a workspace whose `origin` remote points to GitLab.
+Expected: the interactive issue tree stays open with grouped sections.
+Batch equivalent for scripts:
 
 ```sh
-bin/herdr-gitlab-issues panel
+bin/herdr-gitlab-issues panel --print
 ```
 
-Expected: grouped sections (`## todo`, `## backlog`, ...) with
-`#IID title [labels]` lines. For usage details, see
-[USER_GUIDE.md](USER_GUIDE.md).
+For usage details, see [USER_GUIDE.md](USER_GUIDE.md).
 
 ## Troubleshooting
 
