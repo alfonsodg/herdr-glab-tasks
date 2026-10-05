@@ -7,7 +7,7 @@ func TestParseCreatedIID(t *testing.T) {
 		out  string
 		want int
 	}{
-		{"- Creating issue\nhttps://scovil.labtau.com/g/p/-/work_items/53\n", 53},
+		{"- Creating issue\nhttps://git.example.com/g/p/-/work_items/53\n", 53},
 		{"https://git.example.com/g/p/-/issues/42", 42},
 		{"no url here", 0},
 		{"", 0},
