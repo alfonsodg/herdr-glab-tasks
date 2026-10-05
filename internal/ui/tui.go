@@ -15,8 +15,9 @@ var (
 	groupStyle = lipgloss.NewStyle().Bold(true).Foreground(lipgloss.Color("6"))
 	dimStyle   = lipgloss.NewStyle().Faint(true)
 	errStyle   = lipgloss.NewStyle().Foreground(lipgloss.Color("1"))
-	selStyle   = lipgloss.NewStyle().Background(lipgloss.Color("238")).Foreground(lipgloss.Color("231"))
 )
+
+const selMark = "▌"
 
 type Model struct {
 	tree    *Tree
@@ -160,15 +161,18 @@ func (m Model) render() string {
 			if m.tree.collapsed[row.Column] {
 				marker = "+"
 			}
-			line = groupStyle.Render(fmt.Sprintf("%s %s", marker, row.Column))
+			line = columnStyle(row.Column).Render(fmt.Sprintf("%s %s", marker, row.Column))
 		case RowIssue:
-			line = fmt.Sprintf("  #%d %s", row.Issue.IID, row.Issue.Title)
+			head := fmt.Sprintf("#%d %s", row.Issue.IID, row.Issue.Title)
+			line = "  " + issueStyle(row.Issue.Labels).Render(head)
 			if chips := renderLabels(row.Issue.Labels); chips != "" {
 				line += " " + chips
 			}
 		}
 		if i == m.tree.cursor {
-			line = selStyle.Render(line)
+			line = selMark + " " + lipgloss.NewStyle().Bold(true).Render(line)
+		} else {
+			line = "  " + line
 		}
 		out.WriteString(line + "\n")
 	}
