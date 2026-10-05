@@ -1,6 +1,6 @@
 id = "alfonsodg.herdr-gitlab-issues"
 name = "GitLab Issues"
-version = "0.1.0"
+version = "0.2.0"
 min_herdr_version = "0.9.0"
 description = "GitLab Issues del workspace: panel por estado, crear issue + rama, CI de la rama"
 platforms = ["linux", "macos"]
@@ -16,7 +16,7 @@ command = ["bin/herdr-gitlab-issues", "panel"]
 id = "issues"
 title = "GitLab Issues"
 contexts = ["workspace", "tab"]
-command = ["bin/herdr-gitlab-issues", "panel"]
+command = ["bin/herdr-gitlab-issues", "panel-open"]
 
 [[actions]]
 id = "new-issue"

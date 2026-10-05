@@ -11,11 +11,12 @@ import (
 
 	"github.com/alfonsodg/herdr-glab-tasks/internal/branch"
 	"github.com/alfonsodg/herdr-glab-tasks/internal/gitlab"
+	"github.com/alfonsodg/herdr-glab-tasks/internal/pane"
 	"github.com/alfonsodg/herdr-glab-tasks/internal/repo"
 	"github.com/alfonsodg/herdr-glab-tasks/internal/ui"
 )
 
-const usage = "usage: herdr-gitlab-issues <panel|new> [flags]"
+const usage = "usage: herdr-gitlab-issues <panel|panel-open|new> [flags]"
 
 func main() {
 	if len(os.Args) < 2 {
@@ -32,6 +33,8 @@ func run(ctx context.Context, cmd string, args []string) error {
 	switch cmd {
 	case "panel":
 		return runPanel(ctx, args)
+	case "panel-open":
+		return runPanelOpen(ctx, args)
 	case "new":
 		return runNew(ctx, args)
 	default:
@@ -39,15 +42,38 @@ func run(ctx context.Context, cmd string, args []string) error {
 	}
 }
 
+func runPanelOpen(ctx context.Context, args []string) error {
+	fs := flag.NewFlagSet("panel-open", flag.ContinueOnError)
+	cwd := fs.String("cwd", "", "workspace directory holding the git remote")
+	if err := fs.Parse(args); err != nil {
+		return err
+	}
+	if *cwd == "" {
+		*cwd = os.Getenv("HERDR_PLUGIN_CWD")
+	}
+	return (&pane.Opener{}).Open(ctx, "alfonsodg.herdr-gitlab-issues", "issues", *cwd)
+}
+
 func runPanel(ctx context.Context, args []string) error {
 	fs := flag.NewFlagSet("panel", flag.ContinueOnError)
 	label := fs.String("label", "", "filter by label")
 	state := fs.String("state", "opened", "issue state")
+	cwd := fs.String("cwd", "", "workspace directory holding the git remote")
+	printOut := fs.Bool("print", false, "print static panel and exit instead of interactive TUI")
 	if err := fs.Parse(args); err != nil {
 		return err
 	}
-	host, project, err := workspaceProject()
+	dir := *cwd
+	if dir == "" {
+		dir = os.Getenv("HERDR_PLUGIN_CWD")
+	}
+	if dir == "" {
+		dir = "."
+	}
+	host, project, err := workspaceProject(dir)
 	if err != nil {
+		fmt.Printf("GitLab Issues: %v\n", err)
+		fmt.Println("Open this pane from a workspace backed by a GitLab remote.")
 		return err
 	}
 	client := gitlab.NewClient("glab", host)
@@ -56,11 +82,18 @@ func runPanel(ctx context.Context, args []string) error {
 		return err
 	}
 	issues = ui.FilterByLabel(issues, *label)
-	fmt.Print(ui.RenderPanel(ui.GroupByStatus(issues)))
-	if iid, ok := branch.IssueRef("."); ok {
-		fmt.Printf("branch: Ref #%d\n", iid)
+	branchRef := ""
+	if iid, ok := branch.IssueRef(dir); ok {
+		branchRef = fmt.Sprintf("branch: Ref #%d", iid)
 	}
-	return nil
+	if *printOut {
+		fmt.Print(ui.RenderPanel(ui.GroupByStatus(issues)))
+		if branchRef != "" {
+			fmt.Println(branchRef)
+		}
+		return nil
+	}
+	return ui.Run(ctx, issues, branchRef)
 }
 
 func runNew(ctx context.Context, args []string) error {
@@ -70,13 +103,21 @@ func runNew(ctx context.Context, args []string) error {
 	labels := fs.String("labels", "", "comma-separated labels")
 	branchType := fs.String("type", "feature", "branch type")
 	scope := fs.String("scope", "tasks", "branch scope")
+	cwd := fs.String("cwd", "", "workspace directory holding the git remote")
 	if err := fs.Parse(args); err != nil {
 		return err
 	}
 	if strings.TrimSpace(*title) == "" {
 		return fmt.Errorf("title is required")
 	}
-	host, project, err := workspaceProject()
+	dir := *cwd
+	if dir == "" {
+		dir = os.Getenv("HERDR_PLUGIN_CWD")
+	}
+	if dir == "" {
+		dir = "."
+	}
+	host, project, err := workspaceProject(dir)
 	if err != nil {
 		return err
 	}
@@ -96,15 +137,15 @@ func runNew(ctx context.Context, args []string) error {
 	if issue.IID == 0 {
 		return fmt.Errorf("could not determine created issue IID")
 	}
-	if err := branch.CreateIssueBranch(".", *branchType, *scope, issue.IID); err != nil {
+	if err := branch.CreateIssueBranch(dir, *branchType, *scope, issue.IID); err != nil {
 		return err
 	}
 	fmt.Printf("created #%d %s on branch %s\n", issue.IID, issue.Title, branch.Name(*branchType, *scope, issue.IID))
 	return nil
 }
 
-func workspaceProject() (host, project string, err error) {
-	out, rerr := exec.Command("git", "remote", "get-url", "origin").Output()
+func workspaceProject(dir string) (host, project string, err error) {
+	out, rerr := exec.Command("git", "-C", dir, "remote", "get-url", "origin").Output()
 	if rerr != nil {
 		return "", "", fmt.Errorf("no git origin remote: %v", rerr)
 	}
