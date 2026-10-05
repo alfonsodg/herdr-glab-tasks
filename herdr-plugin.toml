@@ -16,7 +16,7 @@ command = ["bin/herdr-gitlab-issues", "panel"]
 id = "issues"
 title = "GitLab Issues"
 contexts = ["workspace", "tab"]
-command = ["bin/herdr-gitlab-issues", "panel"]
+command = ["bin/herdr-gitlab-issues", "panel-open"]
 
 [[actions]]
 id = "new-issue"
