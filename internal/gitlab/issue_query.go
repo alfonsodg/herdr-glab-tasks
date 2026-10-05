@@ -35,13 +35,17 @@ fragment issue on Issue {
 
 func buildListQuery(project, state, label string) string {
 	p, _ := json.Marshal(project)
-	s, _ := json.Marshal(state)
+	switch state {
+	case "opened", "closed", "all":
+	default:
+		state = "opened"
+	}
 	var filter string
 	if label != "" {
 		l, _ := json.Marshal(label)
 		filter = fmt.Sprintf(", labelName: [%s]", l)
 	}
-	return fmt.Sprintf("query { project(fullPath: %s) { issues(state: %s%s, first: 50) { nodes { ...issue } } } }\n%s", p, s, filter, issueFragment)
+	return fmt.Sprintf("query { project(fullPath: %s) { issues(state: %s%s, first: 50) { nodes { ...issue } } } }\n%s", p, state, filter, issueFragment)
 }
 
 const oneIssueQuery = `

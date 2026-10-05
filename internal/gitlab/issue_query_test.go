@@ -39,9 +39,21 @@ func TestConvertIssueNodeClosed(t *testing.T) {
 
 func TestBuildListQuery(t *testing.T) {
 	q := buildListQuery("mygroup/myproject", "opened", "status::todo")
-	for _, want := range []string{"mygroup/myproject", "opened", "status::todo", "issues("} {
+	for _, want := range []string{`"mygroup/myproject"`, "state: opened", "status::todo", "issues("} {
 		if !contains(q, want) {
 			t.Fatalf("query missing %q:\n%s", want, q)
+		}
+	}
+	if contains(q, `state: "opened"`) {
+		t.Fatalf("state must be unquoted enum:\n%s", q)
+	}
+}
+
+func TestBuildListQueryStateAllowlist(t *testing.T) {
+	for _, tc := range []struct{ in, want string }{{"opened", "state: opened"}, {"closed", "state: closed"}, {"all", "state: all"}, {"bogus", "state: opened"}, {"", "state: opened"}} {
+		q := buildListQuery("g/p", tc.in, "")
+		if !contains(q, tc.want) {
+			t.Fatalf("buildListQuery(%q) missing %q:\n%s", tc.in, tc.want, q)
 		}
 	}
 }
