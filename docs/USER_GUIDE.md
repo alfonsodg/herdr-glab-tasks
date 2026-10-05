@@ -14,7 +14,8 @@ How to use the GitLab Issues plugin from Herdr. For setup, see
 
 ## Panel: see workspace issues
 
-Open the **GitLab Issues** action or pane in Herdr. It runs:
+Press `Ctrl+B i` to open the **GitLab Issues** pane in Herdr. It runs the
+`issues` action, which opens the pane entry. Equivalent terminal form:
 
 ```sh
 bin/herdr-gitlab-issues panel
@@ -47,8 +48,8 @@ matches one GitLab label exactly, for example `status::review`.
 
 ## Create issue plus branch
 
-The **Nuevo issue + rama** action runs one flow: create the issue,
-then check out its branch. From the terminal:
+Press `Ctrl+B Shift+I` for the **Nuevo issue + rama** action. From the
+terminal the same flow is:
 
 ```sh
 bin/herdr-gitlab-issues new --title "feat(auth): login (#N)" \

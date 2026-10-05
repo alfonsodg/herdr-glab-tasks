@@ -11,11 +11,12 @@ import (
 
 	"github.com/alfonsodg/herdr-glab-tasks/internal/branch"
 	"github.com/alfonsodg/herdr-glab-tasks/internal/gitlab"
+	"github.com/alfonsodg/herdr-glab-tasks/internal/pane"
 	"github.com/alfonsodg/herdr-glab-tasks/internal/repo"
 	"github.com/alfonsodg/herdr-glab-tasks/internal/ui"
 )
 
-const usage = "usage: herdr-gitlab-issues <panel|new> [flags]"
+const usage = "usage: herdr-gitlab-issues <panel|panel-open|new> [flags]"
 
 func main() {
 	if len(os.Args) < 2 {
@@ -32,6 +33,8 @@ func run(ctx context.Context, cmd string, args []string) error {
 	switch cmd {
 	case "panel":
 		return runPanel(ctx, args)
+	case "panel-open":
+		return (&pane.Opener{}).Open(ctx, "alfonsodg.herdr-gitlab-issues", "issues")
 	case "new":
 		return runNew(ctx, args)
 	default:
