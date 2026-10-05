@@ -7,6 +7,7 @@ import (
 	"fmt"
 	"io/fs"
 	"os/exec"
+	"regexp"
 	"strconv"
 	"strings"
 )
@@ -84,13 +85,28 @@ func (c *Client) CreateIssue(ctx context.Context, project, title, description st
 	if err != nil {
 		return Issue{}, classify(err)
 	}
-	var created struct {
-		IID int `json:"iid"`
-	}
-	if jerr := json.Unmarshal(out, &created); jerr == nil && created.IID != 0 {
-		return c.GetIssue(ctx, project, created.IID)
+	if iid := parseCreatedIID(string(out)); iid != 0 {
+		return c.GetIssue(ctx, project, iid)
 	}
 	return Issue{Title: title, Description: description, Labels: labels, State: "opened"}, nil
+}
+
+var createdURLPattern = regexp.MustCompile(`/-/work_items/(\d+)|/-/issues/(\d+)`)
+
+func parseCreatedIID(out string) int {
+	m := createdURLPattern.FindStringSubmatch(out)
+	if m == nil {
+		return 0
+	}
+	for _, g := range m[1:] {
+		if g == "" {
+			continue
+		}
+		if iid, err := strconv.Atoi(g); err == nil {
+			return iid
+		}
+	}
+	return 0
 }
 
 func (c *Client) graphql(ctx context.Context, query string, vars []string, out any) error {
