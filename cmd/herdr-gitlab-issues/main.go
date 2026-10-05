@@ -72,14 +72,20 @@ func runPanel(ctx context.Context, args []string) error {
 	}
 	host, project, err := workspaceProject(dir)
 	if err != nil {
-		fmt.Printf("GitLab Issues: %v\n", err)
-		fmt.Println("Open this pane from a workspace backed by a GitLab remote.")
-		return err
+		msg := fmt.Sprintf("Not a GitLab workspace: %s\n%s\n\nOpen this pane from a repository with a GitLab remote.", dir, err)
+		if *printOut {
+			fmt.Println(msg)
+			return err
+		}
+		return ui.RunError(ctx, msg)
 	}
 	client := gitlab.NewClient("glab", host)
 	issues, err := client.ListIssues(ctx, project, *state, *label)
 	if err != nil {
-		return err
+		if *printOut {
+			return err
+		}
+		return ui.RunError(ctx, fmt.Sprintf("Cannot list issues for %s: %v", project, err))
 	}
 	issues = ui.FilterByLabel(issues, *label)
 	branchRef := ""
