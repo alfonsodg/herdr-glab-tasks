@@ -1,6 +1,10 @@
 package ui
 
-import "charm.land/lipgloss/v2"
+import (
+	"os"
+
+	"charm.land/lipgloss/v2"
+)
 
 func LabelColorName(label string) string {
 	switch label {
@@ -27,4 +31,13 @@ func labelStyle(label string) lipgloss.Style {
 		return lipgloss.NewStyle()
 	}
 	return lipgloss.NewStyle().Foreground(lipgloss.Color(name))
+}
+
+func ForceColor() {
+	if os.Getenv("NO_COLOR") != "" {
+		return
+	}
+	if _, set := os.LookupEnv("CLICOLOR_FORCE"); !set {
+		os.Setenv("CLICOLOR_FORCE", "1")
+	}
 }
