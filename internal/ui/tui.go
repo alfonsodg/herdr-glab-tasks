@@ -72,6 +72,10 @@ func NewModel(issues []gitlab.Issue, branchRef string) Model {
 	return Model{tree: NewTree(issues), branch: branchRef}
 }
 
+func NewErrorModel(message string) Model {
+	return Model{tree: NewTree(nil), err: message}
+}
+
 func (m Model) Init() tea.Cmd {
 	return nil
 }
@@ -150,8 +154,12 @@ func (m Model) render() string {
 		out.WriteString(errStyle.Render(m.err) + "\n\n")
 	}
 	rows := m.tree.Rows()
-	if len(rows) == 0 {
+	if len(rows) == 0 && m.err == "" {
 		out.WriteString(dimStyle.Render("No issues found.") + "\n")
+	}
+	if m.err != "" && len(rows) == 0 {
+		out.WriteString(dimStyle.Render("Press q to close."))
+		out.WriteString("\n")
 	}
 	for i, row := range rows {
 		line := ""
@@ -206,6 +214,14 @@ func Run(ctx context.Context, issues []gitlab.Issue, branchRef string) error {
 	_ = ctx
 	ForceColor()
 	p := tea.NewProgram(NewModel(issues, branchRef))
+	_, err := p.Run()
+	return err
+}
+
+func RunError(ctx context.Context, message string) error {
+	_ = ctx
+	ForceColor()
+	p := tea.NewProgram(NewErrorModel(message))
 	_, err := p.Run()
 	return err
 }
