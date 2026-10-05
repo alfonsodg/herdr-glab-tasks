@@ -10,15 +10,27 @@ plugin addresses.
 
 ## Features
 
-- Issue panel grouped by `todo`, `review`, `backlog`, `done`, `none` columns.
+- Interactive issue tree grouped by `todo`, `review`, `backlog`, `done`,
+  `none` columns with collapse and cursor navigation.
 - Label filter (`--label`) and state selector (`--state`).
+- Batch mode (`panel --print`) for scripts keeping the classic output.
 - Create issue plus branch in one step (`new` command).
 - Branch state line showing the `Ref #N` issue of the current branch.
 - Link handler opening GitLab issue URLs from Herdr panes.
 
+## Keys
+
+| Keys | Action |
+| ---- | ------ |
+| `Ctrl+B i` | Open the GitLab Issues pane |
+| `Ctrl+B Shift+I` | New issue plus branch |
+
+Bound in the local Herdr config; the `i` key is free (no overlap with
+annotate, crabbox, file-viewer, or telegram bindings).
+
 ## Stack
 
-- Go 1.27, single binary, no runtime dependencies.
+- Go 1.27, single binary, TUI via bubbletea v2 and lipgloss v2.
 - GitLab access exclusively through the `glab` CLI (no tokens managed).
 - See [docs/STANDARDS.md](docs/STANDARDS.md) for conventions.
 

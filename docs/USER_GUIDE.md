@@ -3,9 +3,9 @@
 | Field | Value |
 | ----- | ----- |
 | **Project** | herdr-glab-tasks — Herdr plugin for GitLab Issues |
-| **Version** | v0.1.0 |
+| **Version** | v0.2.0 |
 | **Created** | 2026-10-05 |
-| **Updated** | 2026-10-05 02:00 |
+| **Updated** | 2026-10-05 11:30 |
 | **Author** | Alfonso de la Guarda Reyes |
 | **Location** | `docs/USER_GUIDE.md` |
 
@@ -15,25 +15,28 @@ How to use the GitLab Issues plugin from Herdr. For setup, see
 ## Panel: see workspace issues
 
 Press `Ctrl+B i` to open the **GitLab Issues** pane in Herdr. It runs the
-`issues` action, which opens the pane entry. Equivalent terminal form:
+`issues` action, which opens the pane entry with an interactive tree that
+stays alive until you quit it.
+
+### Tree navigation
+
+| Keys | Action |
+| ---- | ------ |
+| `j` / `k` or arrows | Move the cursor |
+| `enter` / `tab` / `space` | Collapse or expand a group |
+| `q` / `esc` / `ctrl+c` | Quit the panel |
+
+Group headers show `-` (expanded) or `+` (collapsed). The footer shows
+the current branch issue when the latest commit carries it.
+
+### Batch mode for scripts
 
 ```sh
-bin/herdr-gitlab-issues panel
+bin/herdr-gitlab-issues panel --print
 ```
 
-Output groups issues by status column:
-
-```text
-## todo (2)
-#12 Fix login redirect [priority::high, status::todo]
-#18 Update docs [status::todo]
-
-## review (1)
-#21 Refactor auth [status::review]
-```
-
-The last line shows the current branch issue when the latest commit
-carries it: `branch: Ref #21`.
+Prints the classic grouped output and exits. Use it in scripts; the pane
+itself always runs the interactive tree.
 
 ## Filter by state and label
 

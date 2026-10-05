@@ -3,7 +3,7 @@
 | Field | Value |
 | ----- | ----- |
 | **Project** | herdr-glab-tasks — Herdr plugin for GitLab Issues |
-| **Version** | v0.1.0 |
+| **Version** | v0.2.0 |
 | **Created** | 2026-10-05 |
 | **Updated** | 2026-10-05 01:30 |
 | **Author** | Alfonso de la Guarda Reyes |
