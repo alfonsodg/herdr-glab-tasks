@@ -18,20 +18,31 @@ How to install the GitLab Issues plugin in Herdr.
 - `glab` CLI installed and authenticated (`glab auth status` shows
   your GitLab host). The plugin never asks for tokens: it reuses
   the `glab` session already on the machine.
-- A local clone of this repository.
+- Nothing else for `plugin install`; linking a local clone needs one.
 
 ## Steps
 
-1. Link the local plugin into Herdr:
+1. Install the plugin. From the marketplace index or GitHub:
+
+   ```sh
+   herdr plugin install alfonsodg/herdr-glab-tasks
+   ```
+
+   Expected: install preview, build runs `sh install.sh`, plugin registered
+   as `herdr-gitlab-issues`.
+
+   For local development, link a clone instead (build runs manually):
 
    ```sh
    herdr plugin link /path/to/herdr-glab-tasks --enabled
+   sh install.sh
    ```
 
    Expected: JSON output with `"plugin_id": "herdr-gitlab-issues"`
    and `"enabled": true`.
 
-2. Build the binary (pulls bubbletea/lipgloss TUI deps on first run):
+2. Build the binary (pulls bubbletea/lipgloss TUI deps on first run).
+   Skip this step for `plugin install`, which builds automatically:
 
    ```sh
    sh install.sh
