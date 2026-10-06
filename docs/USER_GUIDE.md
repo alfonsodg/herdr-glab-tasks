@@ -83,7 +83,7 @@ matches one GitLab label exactly, for example `status::review`.
 ## Configuration
 
 Defaults live in `config.toml` inside the plugin config directory
-(`herdr plugin config-dir alfonsodg.herdr-gitlab-issues`):
+(`herdr plugin config-dir herdr-gitlab-issues`):
 
 | Key | Default | Meaning |
 | --- | ------- | ------- |

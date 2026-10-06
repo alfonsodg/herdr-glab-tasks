@@ -19,6 +19,8 @@ import (
 
 const usage = "usage: herdr-gitlab-issues <panel|panel-open|new> [flags]"
 
+const pluginID = "herdr-gitlab-issues"
+
 func main() {
 	if len(os.Args) < 2 {
 		fmt.Fprintln(os.Stderr, usage)
@@ -52,7 +54,7 @@ func runPanelOpen(ctx context.Context, args []string) error {
 	if *cwd == "" {
 		*cwd = os.Getenv("HERDR_PLUGIN_CWD")
 	}
-	return (&pane.Opener{}).Open(ctx, "alfonsodg.herdr-gitlab-issues", "issues", *cwd)
+	return (&pane.Opener{}).Open(ctx, pluginID, "issues", *cwd)
 }
 
 func runPanel(ctx context.Context, args []string) error {
@@ -172,7 +174,7 @@ func runNew(ctx context.Context, args []string) error {
 func loadConfig() config.Config {
 	dir := os.Getenv("HERDR_PLUGIN_CONFIG_DIR")
 	if dir == "" {
-		if out, err := exec.Command("herdr", "plugin", "config-dir", "alfonsodg.herdr-gitlab-issues").Output(); err == nil {
+		if out, err := exec.Command("herdr", "plugin", "config-dir", pluginID).Output(); err == nil {
 			dir = strings.TrimSpace(string(out))
 		}
 	}
