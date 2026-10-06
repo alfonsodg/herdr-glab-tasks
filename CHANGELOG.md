@@ -5,7 +5,12 @@ All notable changes to this project are documented here. Format follows
 
 ## [Unreleased]
 
-### Added
+## [0.3.0] - 2026-10-06
+
+Config, navigation and resilience release: interactive polish plus plugin
+id rename.
+
+### Added in 0.3.0
 
 - Per-column header colors: todo yellow, review magenta, backlog gray,
   done green, none cyan (#14).
@@ -14,12 +19,22 @@ All notable changes to this project are documented here. Format follows
 - Scrollable issue detail window on `enter` with `j/k` scroll and
   `esc` back, preserving the tree cursor (#12).
 - Label chips keep their family colors inside the selected row (#14).
+- Viewport scrolling for the tree: the window follows the cursor (#17).
+- Plugin `config.toml` defaults: `state`, `label`, `branch_type`,
+  `branch_scope`; CLI flags win over config (#18).
 
-### Fixed
+### Fixed in 0.3.0
 
 - Color profile forced at TUI start so the Herdr pane renders ANSI
   even when it advertises dumb/no-TTY; `NO_COLOR` still respected (#13).
 - Detail scroll window clamped to the terminal height (#12).
+- Interactive panel stays open showing the reason when the focused
+  pane is not a GitLab workspace (#16).
+
+### Changed in 0.3.0
+
+- Plugin id renamed `alfonsodg.herdr-gitlab-issues` ->
+  `herdr-gitlab-issues`; keybindings and config dir move with it (#19).
 
 ## [0.2.0] - 2026-10-05
 
