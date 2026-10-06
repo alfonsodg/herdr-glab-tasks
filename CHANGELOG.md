@@ -10,6 +10,8 @@ All notable changes to this project are documented here. Format follows
 - Prebuilt release packages (linux/macos, amd64/arm64) published by the
   release workflow; `install.sh` downloads the matching binary when the
   machine has no Go toolchain (#22).
+- Branch footer now includes the latest GitLab CI status for the referenced
+  issue branch (#4).
 - Interactive new-issue form for the Herdr keybinding, while preserving the
   flag-based CLI flow (#8).
 

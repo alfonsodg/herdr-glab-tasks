@@ -5,6 +5,12 @@ import (
 	"testing"
 )
 
+func TestFormatBranchStatus(t *testing.T) {
+	if got := formatBranchStatus(42, "success"); got != "branch: Ref #42 · CI: success" {
+		t.Fatalf("formatBranchStatus() = %q", got)
+	}
+}
+
 func TestReadInteractiveTitle(t *testing.T) {
 	var out strings.Builder
 	title, ok, err := readInteractiveTitle(strings.NewReader("Fix login\n"), &out)
