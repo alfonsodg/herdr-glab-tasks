@@ -19,7 +19,7 @@ plugin addresses.
 - Label filter (`--label`) and state selector (`--state`).
 - Batch mode (`panel --print`) for scripts keeping the classic output.
 - Create issue plus branch in one step (`new` command).
-- Branch state line showing the `Ref #N` issue of the current branch.
+- Branch state line showing the `Ref #N` issue and CI status of the current branch.
 - Link handler opening GitLab issue URLs from Herdr panes.
 
 ## Keys

@@ -24,6 +24,27 @@ func TestListIssuesParsesResponse(t *testing.T) {
 	}
 }
 
+func TestLatestPipelineParsesResponse(t *testing.T) {
+	resp := `[{"status":"success","ref":"feature/auth-#42","web_url":"https://git.example.com/g/p/-/pipelines/7"}]`
+	pipeline, err := stubClient(resp).LatestPipeline(context.Background(), "g/p", "feature/auth-#42")
+	if err != nil {
+		t.Fatalf("LatestPipeline: %v", err)
+	}
+	if pipeline.Status != "success" || pipeline.Ref != "feature/auth-#42" {
+		t.Fatalf("pipeline = %+v", pipeline)
+	}
+}
+
+func TestLatestPipelineWithoutResults(t *testing.T) {
+	pipeline, err := stubClient(`[]`).LatestPipeline(context.Background(), "g/p", "feature/auth-#42")
+	if err != nil {
+		t.Fatalf("LatestPipeline: %v", err)
+	}
+	if pipeline.Status != "none" || pipeline.Ref != "feature/auth-#42" {
+		t.Fatalf("pipeline = %+v; want none for the branch", pipeline)
+	}
+}
+
 func TestListIssuesProjectNotFound(t *testing.T) {
 	resp := `{"data":{"project":null}}`
 	if _, err := stubClient(resp).ListIssues(context.Background(), "g/missing", "opened", ""); err == nil {

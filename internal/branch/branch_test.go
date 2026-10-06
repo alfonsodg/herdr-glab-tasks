@@ -65,3 +65,17 @@ func TestBranchIssueRefNone(t *testing.T) {
 		t.Fatal("expected no ref on plain commit")
 	}
 }
+
+func TestCurrentBranchName(t *testing.T) {
+	dir := initRepo(t)
+	if err := CreateIssueBranch(dir, "feature", "auth", 42); err != nil {
+		t.Fatalf("CreateIssueBranch: %v", err)
+	}
+	name, err := CurrentName(dir)
+	if err != nil {
+		t.Fatalf("CurrentName: %v", err)
+	}
+	if name != "feature/auth-#42" {
+		t.Fatalf("CurrentName() = %q, want feature/auth-#42", name)
+	}
+}

@@ -102,7 +102,13 @@ func runPanel(ctx context.Context, args []string) error {
 	issues = ui.FilterByLabel(issues, useLabel)
 	branchRef := ""
 	if iid, ok := branch.IssueRef(dir); ok {
-		branchRef = fmt.Sprintf("branch: Ref #%d", iid)
+		ciStatus := "unavailable"
+		if branchName, branchErr := branch.CurrentName(dir); branchErr == nil {
+			if pipeline, pipelineErr := client.LatestPipeline(ctx, project, branchName); pipelineErr == nil {
+				ciStatus = pipeline.Status
+			}
+		}
+		branchRef = formatBranchStatus(iid, ciStatus)
 	}
 	if *printOut {
 		fmt.Print(ui.RenderPanel(ui.GroupByStatus(issues)))
@@ -112,6 +118,10 @@ func runPanel(ctx context.Context, args []string) error {
 		return nil
 	}
 	return ui.Run(ctx, issues, branchRef)
+}
+
+func formatBranchStatus(iid int, ciStatus string) string {
+	return fmt.Sprintf("branch: Ref #%d · CI: %s", iid, ciStatus)
 }
 
 func runNew(ctx context.Context, args []string) error {

@@ -28,7 +28,8 @@ stays alive until you quit it.
 | `q` / `esc` / `ctrl+c` | Quit the panel |
 
 Group headers show `-` (expanded) or `+` (collapsed). The footer shows
-the current branch issue when the latest commit carries it.
+the current branch issue and CI status when the latest commit carries a
+`Ref #N` reference.
 
 ### Colors
 

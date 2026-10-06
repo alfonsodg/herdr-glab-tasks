@@ -23,6 +23,12 @@ type Client struct {
 	run  func(ctx context.Context, glab string, args ...string) ([]byte, error)
 }
 
+type Pipeline struct {
+	Status string `json:"status"`
+	Ref    string `json:"ref"`
+	WebURL string `json:"web_url"`
+}
+
 func NewClient(glab, host string) *Client {
 	return &Client{glab: glab, host: host, run: defaultRun}
 }
@@ -89,6 +95,26 @@ func (c *Client) CreateIssue(ctx context.Context, project, title, description st
 		return c.GetIssue(ctx, project, iid)
 	}
 	return Issue{Title: title, Description: description, Labels: labels, State: "opened"}, nil
+}
+
+func (c *Client) LatestPipeline(ctx context.Context, project, branch string) (Pipeline, error) {
+	args := []string{
+		"ci", "list", "--repo", project, "--ref", branch,
+		"--order", "updated_at", "--sort", "desc", "--per-page", "1",
+		"--output", "json",
+	}
+	out, err := c.run(ctx, c.glab, args...)
+	if err != nil {
+		return Pipeline{}, classify(err)
+	}
+	var pipelines []Pipeline
+	if err := json.Unmarshal(out, &pipelines); err != nil {
+		return Pipeline{}, fmt.Errorf("parse pipeline response: %w", err)
+	}
+	if len(pipelines) == 0 {
+		return Pipeline{Status: "none", Ref: branch}, nil
+	}
+	return pipelines[0], nil
 }
 
 var createdURLPattern = regexp.MustCompile(`/-/work_items/(\d+)|/-/issues/(\d+)`)

@@ -43,6 +43,18 @@ func IssueRef(dir string) (int, bool) {
 	return iid, true
 }
 
+func CurrentName(dir string) (string, error) {
+	out, err := exec.Command("git", "-C", dir, "branch", "--show-current").Output()
+	if err != nil {
+		return "", fmt.Errorf("read current branch: %w", err)
+	}
+	name := strings.TrimSpace(string(out))
+	if name == "" {
+		return "", errors.New("repository is in detached HEAD state")
+	}
+	return name, nil
+}
+
 func dirty(dir string) bool {
 	out, err := exec.Command("git", "-C", dir, "status", "--porcelain").Output()
 	if err != nil {
