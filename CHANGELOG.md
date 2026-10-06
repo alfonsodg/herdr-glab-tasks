@@ -10,6 +10,8 @@ All notable changes to this project are documented here. Format follows
 - Prebuilt release packages (linux/macos, amd64/arm64) published by the
   release workflow; `install.sh` downloads the matching binary when the
   machine has no Go toolchain (#22).
+- Interactive new-issue form for the Herdr keybinding, while preserving the
+  flag-based CLI flow (#8).
 
 ## [0.3.0] - 2026-10-06
 
