@@ -28,7 +28,7 @@ How to install the GitLab Issues plugin in Herdr.
    herdr plugin link /path/to/herdr-glab-tasks --enabled
    ```
 
-   Expected: JSON output with `"plugin_id": "alfonsodg.herdr-gitlab-issues"`
+   Expected: JSON output with `"plugin_id": "herdr-gitlab-issues"`
    and `"enabled": true`.
 
 2. Build the binary (pulls bubbletea/lipgloss TUI deps on first run):
@@ -46,13 +46,13 @@ How to install the GitLab Issues plugin in Herdr.
    [[keys.command]]
    key = "prefix+i"
    type = "plugin_action"
-   command = "alfonsodg.herdr-gitlab-issues.issues"
+   command = "herdr-gitlab-issues.issues"
    description = "GitLab Issues del workspace"
 
    [[keys.command]]
    key = "prefix+shift+i"
    type = "plugin_action"
-   command = "alfonsodg.herdr-gitlab-issues.new-issue"
+   command = "herdr-gitlab-issues.new-issue"
    description = "Nuevo issue + rama"
    ```
 
@@ -65,10 +65,10 @@ How to install the GitLab Issues plugin in Herdr.
    herdr plugin list
    ```
 
-   Expected: a line with `alfonsodg.herdr-gitlab-issues (GitLab Issues)`.
+   Expected: a line with `herdr-gitlab-issues (GitLab Issues)`.
 
 5. Optional: plugin defaults via `config.toml` in the plugin config
-   directory (`herdr plugin config-dir alfonsodg.herdr-gitlab-issues`):
+   directory (`herdr plugin config-dir herdr-gitlab-issues`):
 
    ```toml
    state = "opened"        # opened | closed | all
