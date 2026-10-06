@@ -3,9 +3,9 @@
 | Field | Value |
 | ----- | ----- |
 | **Project** | herdr-glab-tasks — Herdr plugin for GitLab Issues |
-| **Version** | v0.2.0 |
+| **Version** | v0.3.0 |
 | **Created** | 2026-10-05 |
-| **Updated** | 2026-10-05 11:30 |
+| **Updated** | 2026-10-06 01:30 |
 | **Author** | Alfonso de la Guarda Reyes |
 | **Location** | `docs/INSTALL.md` |
 
@@ -28,7 +28,7 @@ How to install the GitLab Issues plugin in Herdr.
    herdr plugin link /path/to/herdr-glab-tasks --enabled
    ```
 
-   Expected: JSON output with `"plugin_id": "alfonsodg.herdr-gitlab-issues"`
+   Expected: JSON output with `"plugin_id": "herdr-gitlab-issues"`
    and `"enabled": true`.
 
 2. Build the binary (pulls bubbletea/lipgloss TUI deps on first run):
@@ -46,13 +46,13 @@ How to install the GitLab Issues plugin in Herdr.
    [[keys.command]]
    key = "prefix+i"
    type = "plugin_action"
-   command = "alfonsodg.herdr-gitlab-issues.issues"
+   command = "herdr-gitlab-issues.issues"
    description = "GitLab Issues del workspace"
 
    [[keys.command]]
    key = "prefix+shift+i"
    type = "plugin_action"
-   command = "alfonsodg.herdr-gitlab-issues.new-issue"
+   command = "herdr-gitlab-issues.new-issue"
    description = "Nuevo issue + rama"
    ```
 
@@ -65,13 +65,26 @@ How to install the GitLab Issues plugin in Herdr.
    herdr plugin list
    ```
 
-   Expected: a line with `alfonsodg.herdr-gitlab-issues (GitLab Issues)`.
+   Expected: a line with `herdr-gitlab-issues (GitLab Issues)`.
+
+5. Optional: plugin defaults via `config.toml` in the plugin config
+   directory (`herdr plugin config-dir herdr-gitlab-issues`):
+
+   ```toml
+   state = "opened"        # opened | closed | all
+   label = ""              # default label filter, e.g. priority::high
+   branch_type = "feature" # default branch type for the new flow
+   branch_scope = "tasks"  # default branch scope for the new flow
+   ```
+
+   Every key is optional; missing keys keep the built-in defaults.
 
 ## Verification
 
 Press `Ctrl+B i` from a workspace whose `origin` remote points to GitLab.
-Expected: the interactive issue tree stays open with grouped sections.
-Batch equivalent for scripts:
+Expected: the interactive issue tree stays open with grouped sections,
+colored headers, and priority-colored titles. Press `enter` on an issue
+to check the scrollable detail window. Batch equivalent for scripts:
 
 ```sh
 bin/herdr-gitlab-issues panel --print

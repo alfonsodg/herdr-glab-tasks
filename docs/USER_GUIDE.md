@@ -3,9 +3,9 @@
 | Field | Value |
 | ----- | ----- |
 | **Project** | herdr-glab-tasks — Herdr plugin for GitLab Issues |
-| **Version** | v0.2.0 |
+| **Version** | v0.3.0 |
 | **Created** | 2026-10-05 |
-| **Updated** | 2026-10-05 11:30 |
+| **Updated** | 2026-10-06 01:30 |
 | **Author** | Alfonso de la Guarda Reyes |
 | **Location** | `docs/USER_GUIDE.md` |
 
@@ -23,11 +23,42 @@ stays alive until you quit it.
 | Keys | Action |
 | ---- | ------ |
 | `j` / `k` or arrows | Move the cursor |
-| `enter` / `tab` / `space` | Collapse or expand a group |
+| `enter` | Open the issue detail window |
+| `tab` / `space` | Collapse or expand a group |
 | `q` / `esc` / `ctrl+c` | Quit the panel |
 
 Group headers show `-` (expanded) or `+` (collapsed). The footer shows
 the current branch issue when the latest commit carries it.
+
+### Colors
+
+| Element | Color |
+| ------- | ----- |
+| `todo` header | Bright yellow |
+| `review` header | Bright magenta |
+| `backlog` header | Gray |
+| `done` header | Green |
+| `none` header | Cyan |
+| Issue title `priority::critical` | Bright red |
+| Issue title `priority::high` | Bright yellow |
+| Issue title `priority::medium` | Bright cyan |
+| Issue title `priority::low` | Gray |
+
+Label chips keep their own family colors. The color profile is forced
+on pane start so the palette renders even in terminals advertised as
+dumb; `NO_COLOR` still disables colors when you set it.
+
+### Issue detail window
+
+Press `enter` on an issue to open its detail window: title, IID, state,
+author, date, URL, labels, and the full description.
+
+| Keys | Action |
+| ---- | ------ |
+| `j` / `k` or arrows | Scroll the description |
+| `esc` / `q` | Back to the tree (cursor preserved) |
+
+Long descriptions scroll in a window sized to the terminal height.
 
 ### Batch mode for scripts
 
@@ -48,6 +79,27 @@ bin/herdr-gitlab-issues panel --state all --label type::bug
 
 States are `opened` (default), `closed`, and `all`. The label flag
 matches one GitLab label exactly, for example `status::review`.
+
+## Configuration
+
+Defaults live in `config.toml` inside the plugin config directory
+(`herdr plugin config-dir herdr-gitlab-issues`):
+
+| Key | Default | Meaning |
+| --- | ------- | ------- |
+| `state` | `opened` | Initial issue state: `opened`, `closed`, `all` |
+| `label` | empty | Initial label filter |
+| `branch_type` | `feature` | Branch type used by the `new` flow |
+| `branch_scope` | `tasks` | Branch scope used by the `new` flow |
+
+Precedence: CLI flag > `config.toml` > built-in default. Example:
+
+```toml
+state = "all"
+label = "priority::high"
+branch_type = "fix"
+branch_scope = "auth"
+```
 
 ## Create issue plus branch
 

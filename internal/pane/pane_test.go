@@ -7,8 +7,8 @@ import (
 )
 
 func TestOpenArgs(t *testing.T) {
-	args := OpenArgs("alfonsodg.herdr-gitlab-issues", "issues", "/home/u/repo")
-	want := []string{"plugin", "pane", "open", "--plugin", "alfonsodg.herdr-gitlab-issues", "--entrypoint", "issues", "--cwd", "/home/u/repo"}
+	args := OpenArgs("herdr-gitlab-issues", "issues", "/home/u/repo")
+	want := []string{"plugin", "pane", "open", "--plugin", "herdr-gitlab-issues", "--entrypoint", "issues", "--cwd", "/home/u/repo"}
 	if len(args) != len(want) {
 		t.Fatalf("args = %v, want %v", args, want)
 	}

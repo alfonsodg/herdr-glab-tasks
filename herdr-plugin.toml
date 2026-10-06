@@ -1,6 +1,6 @@
-id = "alfonsodg.herdr-gitlab-issues"
+id = "herdr-gitlab-issues"
 name = "GitLab Issues"
-version = "0.2.0"
+version = "0.3.0"
 min_herdr_version = "0.9.0"
 description = "GitLab Issues del workspace: panel por estado, crear issue + rama, CI de la rama"
 platforms = ["linux", "macos"]

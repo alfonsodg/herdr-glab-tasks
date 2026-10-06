@@ -3,9 +3,9 @@
 | Field | Value |
 | ----- | ----- |
 | **Project** | herdr-glab-tasks — Herdr plugin for GitLab Issues |
-| **Version** | v0.2.0 |
+| **Version** | v0.3.0 |
 | **Created** | 2026-10-05 |
-| **Updated** | 2026-10-05 01:30 |
+| **Updated** | 2026-10-06 01:30 |
 | **Author** | Alfonso de la Guarda Reyes |
 | **Location** | `docs/STANDARDS.md` |
 
