@@ -40,12 +40,18 @@ annotate, crabbox, file-viewer, or telegram bindings).
 
 ## Quick start
 
+Install from the marketplace index or straight from GitHub:
+
+```sh
+herdr plugin install alfonsodg/herdr-glab-tasks
+```
+
+Or link a local clone for development:
+
 ```sh
 herdr plugin link /path/to/herdr-glab-tasks --enabled
 sh install.sh
-bin/herdr-gitlab-issues panel
 bin/herdr-gitlab-issues panel --state all --label priority::medium
-bin/herdr-gitlab-issues new --title "feat(scope): subject (#N)"
 ```
 
 ## Security
