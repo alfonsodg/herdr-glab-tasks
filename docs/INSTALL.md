@@ -64,7 +64,7 @@ How to install the GitLab Issues plugin in Herdr.
    key = "prefix+shift+i"
    type = "plugin_action"
    command = "herdr-gitlab-issues.new-issue"
-   description = "Nuevo issue + rama"
+   description = "Open the new issue plus branch form"
    ```
 
    The `i` key is free: no overlap with annotate, crabbox, file-viewer,

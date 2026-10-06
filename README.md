@@ -27,7 +27,7 @@ plugin addresses.
 | Keys | Action |
 | ---- | ------ |
 | `Ctrl+B i` | Open the GitLab Issues pane |
-| `Ctrl+B Shift+I` | New issue plus branch |
+| `Ctrl+B Shift+I` | Open the new issue plus branch form |
 
 Bound in the local Herdr config; the `i` key is free (no overlap with
 annotate, crabbox, file-viewer, or telegram bindings).

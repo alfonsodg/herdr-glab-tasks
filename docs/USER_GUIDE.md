@@ -104,8 +104,9 @@ branch_scope = "auth"
 
 ## Create issue plus branch
 
-Press `Ctrl+B Shift+I` for the **Nuevo issue + rama** action. From the
-terminal the same flow is:
+Press `Ctrl+B Shift+I` for the **Nuevo issue + rama** form, enter a title,
+and press enter. The configured branch type and scope are used. From the
+terminal, the flag-based flow is:
 
 ```sh
 bin/herdr-gitlab-issues new --title "feat(auth): login (#N)" \

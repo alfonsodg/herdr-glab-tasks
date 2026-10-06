@@ -12,6 +12,8 @@ All notable changes to this project are documented here. Format follows
   machine has no Go toolchain (#22).
 - Branch footer now includes the latest GitLab CI status for the referenced
   issue branch (#4).
+- Interactive new-issue form for the Herdr keybinding, while preserving the
+  flag-based CLI flow (#8).
 
 ## [0.3.0] - 2026-10-06
 

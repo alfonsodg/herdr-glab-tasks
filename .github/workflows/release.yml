@@ -8,6 +8,10 @@ on:
       tag:
         description: "Existing tag to build and publish (e.g. v0.3.0)"
         required: true
+      source_ref:
+        description: "Revision containing the release configuration"
+        required: false
+        default: main
 
 permissions:
   contents: write
@@ -19,7 +23,7 @@ jobs:
       - uses: actions/checkout@v4
         with:
           fetch-depth: 0
-          ref: ${{ inputs.tag || github.ref }}
+          ref: ${{ inputs.source_ref || github.ref }}
       - uses: actions/setup-go@v5
         with:
           go-version: stable

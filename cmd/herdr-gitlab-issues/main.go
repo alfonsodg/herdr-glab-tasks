@@ -2,9 +2,11 @@
 package main
 
 import (
+	"bufio"
 	"context"
 	"flag"
 	"fmt"
+	"io"
 	"os"
 	"os/exec"
 	"strings"
@@ -17,7 +19,7 @@ import (
 	"github.com/alfonsodg/herdr-glab-tasks/internal/ui"
 )
 
-const usage = "usage: herdr-gitlab-issues <panel|panel-open|new> [flags]"
+const usage = "usage: herdr-gitlab-issues <panel|panel-open|new-open|new> [flags]"
 
 const pluginID = "herdr-gitlab-issues"
 
@@ -38,6 +40,8 @@ func run(ctx context.Context, cmd string, args []string) error {
 		return runPanel(ctx, args)
 	case "panel-open":
 		return runPanelOpen(ctx, args)
+	case "new-open":
+		return runNewOpen(ctx, args)
 	case "new":
 		return runNew(ctx, args)
 	default:
@@ -46,7 +50,15 @@ func run(ctx context.Context, cmd string, args []string) error {
 }
 
 func runPanelOpen(ctx context.Context, args []string) error {
-	fs := flag.NewFlagSet("panel-open", flag.ContinueOnError)
+	return runPaneOpen(ctx, args, "panel-open", "issues")
+}
+
+func runNewOpen(ctx context.Context, args []string) error {
+	return runPaneOpen(ctx, args, "new-open", "new")
+}
+
+func runPaneOpen(ctx context.Context, args []string, command, entrypoint string) error {
+	fs := flag.NewFlagSet(command, flag.ContinueOnError)
 	cwd := fs.String("cwd", "", "workspace directory holding the git remote")
 	if err := fs.Parse(args); err != nil {
 		return err
@@ -54,7 +66,7 @@ func runPanelOpen(ctx context.Context, args []string) error {
 	if *cwd == "" {
 		*cwd = os.Getenv("HERDR_PLUGIN_CWD")
 	}
-	return (&pane.Opener{}).Open(ctx, pluginID, "issues", *cwd)
+	return (&pane.Opener{}).Open(ctx, pluginID, entrypoint, *cwd)
 }
 
 func runPanel(ctx context.Context, args []string) error {
@@ -136,7 +148,18 @@ func runNew(ctx context.Context, args []string) error {
 		return err
 	}
 	if strings.TrimSpace(*title) == "" {
-		return fmt.Errorf("title is required")
+		if os.Getenv("HERDR_PLUGIN_ENTRYPOINT_ID") != "new" {
+			return fmt.Errorf("title is required")
+		}
+		var ok bool
+		var err error
+		*title, ok, err = readInteractiveTitle(os.Stdin, os.Stdout)
+		if err != nil {
+			return err
+		}
+		if !ok {
+			return nil
+		}
 	}
 	cfg := loadConfig()
 	useType := *branchType
@@ -179,6 +202,20 @@ func runNew(ctx context.Context, args []string) error {
 	}
 	fmt.Printf("created #%d %s on branch %s\n", issue.IID, issue.Title, branch.Name(useType, useScope, issue.IID))
 	return nil
+}
+
+func readInteractiveTitle(in io.Reader, out io.Writer) (string, bool, error) {
+	fmt.Fprint(out, "Issue title: ")
+	line, err := bufio.NewReader(in).ReadString('\n')
+	if err != nil && err != io.EOF {
+		return "", false, err
+	}
+	title := strings.TrimSpace(line)
+	if title == "" {
+		fmt.Fprintln(out, "Cancelled.")
+		return "", false, nil
+	}
+	return title, true, nil
 }
 
 func loadConfig() config.Config {

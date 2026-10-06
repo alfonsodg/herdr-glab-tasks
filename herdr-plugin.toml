@@ -22,13 +22,19 @@ command = ["bin/herdr-gitlab-issues", "panel-open"]
 id = "new-issue"
 title = "Nuevo issue + rama"
 contexts = ["workspace"]
-command = ["bin/herdr-gitlab-issues", "new"]
+command = ["bin/herdr-gitlab-issues", "new-open"]
 
 [[panes]]
 id = "issues"
 title = "GitLab Issues"
 placement = "split"
 command = ["bin/herdr-gitlab-issues", "panel"]
+
+[[panes]]
+id = "new"
+title = "Nuevo issue + rama"
+placement = "split"
+command = ["bin/herdr-gitlab-issues", "new"]
 
 [[link_handlers]]
 id = "gitlab-issue"
