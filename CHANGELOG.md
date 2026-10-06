@@ -5,6 +5,12 @@ All notable changes to this project are documented here. Format follows
 
 ## [Unreleased]
 
+### Added
+
+- Prebuilt release packages (linux/macos, amd64/arm64) published by the
+  release workflow; `install.sh` downloads the matching binary when the
+  machine has no Go toolchain (#22).
+
 ## [0.3.0] - 2026-10-06
 
 Config, navigation and resilience release: interactive polish plus plugin
