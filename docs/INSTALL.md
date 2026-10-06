@@ -14,11 +14,11 @@ How to install the GitLab Issues plugin in Herdr.
 ## Prerequisites
 
 - Herdr 0.9.0 or newer (see [Herdr plugin docs][herdr-plugins]).
-- Go toolchain for the local build.
 - `glab` CLI installed and authenticated (`glab auth status` shows
   your GitLab host). The plugin never asks for tokens: it reuses
   the `glab` session already on the machine.
-- Nothing else for `plugin install`; linking a local clone needs one.
+- Go toolchain only for building from a local clone; `plugin install`
+  uses a prebuilt release binary when Go is absent.
 
 ## Steps
 
